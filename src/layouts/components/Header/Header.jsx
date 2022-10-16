@@ -32,19 +32,19 @@ function Header() {
                                     </Link>
                                 </li>
                                 <li className="group py-2 px-3 flex items-center relative">
-                                    <Link className="text-lg" to={'/'}>
+                                    <Link className="text-lg" to={'/category'}>
                                         Danh mục
                                     </Link>
-                                    <div className="group-hover:block hidden absolute z-40 top-full left-0 w-40 shadow-md">
+                                    <div className="group-hover:block hidden absolute z-40 top-full left-0 w-40 shadow-md bg-white">
                                         <ul className="px-3 py-4 text-base">
                                             <li>
-                                                <Link to={'/'}>Sub Menu 1</Link>
+                                                <Link to={'/category/1'}>Sub Menu 1</Link>
                                             </li>
                                             <li>
-                                                <Link to={'/'}>Sub Menu 2</Link>
+                                                <Link to={'/category/2'}>Sub Menu 2</Link>
                                             </li>
                                             <li>
-                                                <Link to={'/'}>Sub Menu 3</Link>
+                                                <Link to={'/category/3'}>Sub Menu 3</Link>
                                             </li>
                                         </ul>
                                     </div>
