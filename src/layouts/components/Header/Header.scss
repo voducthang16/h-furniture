@@ -1,0 +1,14 @@
+.search-bar.active {
+    animation: search .5s ease-in-out;
+}
+
+
+@keyframes search {
+    from {
+        transform: translateY(-20%);
+    }
+
+    to {
+        transform: translateY(0%);
+    }
+}
