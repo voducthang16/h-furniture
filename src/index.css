@@ -6,3 +6,12 @@
     @apply w-full mx-auto px-4 2xl:max-w-screen-2xl 2xl:px-32 
     xl:max-w-screen-xl xl:px-10 lg:max-w-screen-lg md:max-w-screen-md sm:max-w-screen-sm;
 }
+
+.pagination-button {
+    @apply w-10 h-10 flex items-center justify-center bg-[#f6f6f6] text-base rounded-full
+    hover:bg-[#c43b68] hover:text-white transition-all cursor-pointer;
+}
+
+.pagination-button.active {
+    @apply bg-[#c43b68] text-white;
+}
