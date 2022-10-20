@@ -1,19 +1,65 @@
 import { AiOutlineArrowLeft, AiOutlineArrowRight } from 'react-icons/ai';
 import { Link, useParams } from 'react-router-dom';
 import './Category.scss';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import Product from '~/layouts/components/Product';
 function Category() {
-    const { id } = useParams();
+    const { categoryId } = useParams();
+    const [category, setCategory] = useState();
+    const [categoryName, setCategoryName] = useState();
+    const [products, setProducts] = useState();
+    const [totalProduct, setTotalProduct] = useState();
+    const productPerPage = 3;
+    const paginationQuantity = Math.ceil(totalProduct / productPerPage);
+    const [paginationArr, setPaginationArr] = useState();
+    const [currentPage, setCurrentPage] = useState(1);
+    useEffect(() => {
+        const arr = [];
+        if (totalProduct) {
+            for (let i = 1; i <= paginationQuantity; i++) {
+                arr.push(i);
+            }
+            setPaginationArr(arr);
+        }
+    }, []);
+    const getCategories = () => {
+        axios
+            .get('http://localhost/be-f-furniture/public/api/category')
+            .then((res) => {
+                setCategory(res.data);
+                setTotalProduct(res.data.length);
+                const newArray = res.data.filter((item) => {
+                    return item.id == +categoryId;
+                });
+                setCategoryName(newArray[0]);
+            })
+            .catch((err) => console.log(err));
+    };
+    const getProducts = (categoryId, currentPage = 1) => {
+        axios
+            .get(`http://localhost/be-f-furniture/public/api/product?loai=${categoryId}&page=${currentPage}`)
+            .then((res) => setProducts(res.data.data))
+            .catch((err) => console.log(err));
+    };
+    useEffect(() => {
+        getCategories();
+    }, [categoryId]);
+    useEffect(() => {
+        getProducts(categoryId);
+    }, [categoryId]);
     return (
         <div className="mb-20">
-            {/* banner */}
+            {/* breadcrumb */}
             <div className="h-56 bg">
                 <div className="container h-56">
                     <div className="flex h-56 justify-center items-center">
                         <div className="flex text-base items-center space-x-2">
                             <Link to={'/'}>Trang chủ</Link>
                             <AiOutlineArrowRight />
-                            <Link to={'/'}>Danh mục</Link>
+                            <Link to={'/category'}>Danh mục</Link>
+                            {categoryId ? <AiOutlineArrowRight /> : <></>}
+                            <Link to={`/category/${categoryName?.id}`}>{categoryName?.ten_loai}</Link>
                         </div>
                     </div>
                 </div>
@@ -24,37 +70,20 @@ function Category() {
                     <div className="col-span-3 ">
                         <h5 className="text-xl font-semibold pb-4 mb-4 border-b border-slate-300/80">Danh mục</h5>
                         <ul className="text-base space-y-4">
-                            <li>
-                                <Link className="hover:opacity-60 transition-all" to={'/category/1'}>
-                                    Danh muc 1
-                                </Link>
-                            </li>
-                            <li>
-                                <Link className="hover:opacity-60 transition-all" to={'/category/2'}>
-                                    Danh muc 2
-                                </Link>
-                            </li>
-                            <li>
-                                <Link className="hover:opacity-60 transition-all" to={'/category/3'}>
-                                    Danh muc 3
-                                </Link>
-                            </li>
+                            {category?.map((item, index) => (
+                                <li key={index} className="hover:opacity-60 transition-all">
+                                    <Link to={`/category/${item.id}`}>{item.ten_loai}</Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
                     <div className="col-span-9">
                         <div className="grid grid-cols-3 gap-8">
-                            <div className="col-span-1">
-                                <Product />
-                            </div>
-                            <div className="col-span-1">
-                                <Product />
-                            </div>
-                            <div className="col-span-1">
-                                <Product />
-                            </div>
-                            <div className="col-span-1">
-                                <Product />
-                            </div>
+                            {products?.map((item, index) => (
+                                <div key={index} className="col-span-1">
+                                    <Product name={item.ten_san_pham} image={item.hinh} price={item.don_gia} />
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -67,9 +96,18 @@ function Category() {
                             <AiOutlineArrowLeft />
                         </div>
                         <ul className="flex space-x-2">
-                            <li className="pagination-button active">1</li>
-                            <li className="pagination-button">2</li>
-                            <li className="pagination-button">3</li>
+                            {paginationArr?.map((index) => (
+                                <li
+                                    key={index}
+                                    className={`pagination-button ${index === currentPage ? 'active' : ''}`}
+                                    onClick={() => {
+                                        setCurrentPage(index);
+                                        getProducts(categoryId, index);
+                                    }}
+                                >
+                                    {index}
+                                </li>
+                            ))}
                         </ul>
                         <div className="pagination-button">
                             <AiOutlineArrowRight />
