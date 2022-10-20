@@ -13,7 +13,7 @@ const publicRoutes = [
         component: Category,
     },
     {
-        path: '/category/:id',
+        path: '/category/:categoryId',
         component: Category,
     },
     {
