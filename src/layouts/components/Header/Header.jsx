@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './Header.module.scss';
 import './Header.scss';
 import image from '~/assets/images';
@@ -6,6 +6,7 @@ import Image from '~/components/Image';
 import { Link } from 'react-router-dom';
 import { AiOutlineArrowDown, AiOutlineSearch, AiOutlineShoppingCart, AiOutlineUser } from 'react-icons/ai';
 import { GoThreeBars } from 'react-icons/go';
+import axios from 'axios';
 function Header() {
     const handleShowNavbar = () => {
         const navbar = document.querySelector('.navbar');
@@ -20,6 +21,18 @@ function Header() {
         searchBar.classList.toggle('hidden');
         searchBar.classList.toggle('active');
     };
+    const [category, setCategory] = useState();
+    const getCategories = () => {
+        axios
+            .get('http://localhost/be-f-furniture/public/api/category')
+            .then((res) => {
+                setCategory(res.data);
+            })
+            .catch((err) => console.log(err));
+    };
+    useEffect(() => {
+        getCategories();
+    }, []);
     return (
         <header className="header-wrapper">
             <div className="header bg-white border-b border-slate-200 relative">
@@ -43,15 +56,11 @@ function Header() {
                                     </Link>
                                     <div className="group-hover:block hidden absolute z-40 top-full left-0 w-40 shadow-md bg-white">
                                         <ul className="px-3 py-4 text-base">
-                                            <li>
-                                                <Link to={'/category/1'}>Sub Menu 1</Link>
-                                            </li>
-                                            <li>
-                                                <Link to={'/category/2'}>Sub Menu 2</Link>
-                                            </li>
-                                            <li>
-                                                <Link to={'/category/3'}>Sub Menu 3</Link>
-                                            </li>
+                                            {category?.map((item, index) => (
+                                                <li key={index} className="hover:opacity-80">
+                                                    <Link to={`/category/${item.id}`}>{item.ten_loai}</Link>
+                                                </li>
+                                            ))}
                                         </ul>
                                     </div>
                                 </li>
