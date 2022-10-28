@@ -1,7 +1,47 @@
 import Image from '~/components/Image';
 import images from '~/assets/images';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
+function setCookie(name, value, days) {
+    var expires = '';
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+        expires = '; expires=' + date.toUTCString();
+    }
+    document.cookie = name + '=' + (value || '') + expires + '; path=/';
+}
+function getCookie(name) {
+    var nameEQ = name + '=';
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
+function eraseCookie(name) {
+    document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
 function Register() {
+    const handleLogin = (e) => {
+        e.preventDefault();
+        const email = document.querySelector('#email');
+        const password = document.querySelector('#password');
+        axios
+            .get('', {
+                email: email,
+                password: password,
+            })
+            .then(function (response) {
+                setCookie('login', true, 7);
+                window.location.replace('http://localhost:3000/');
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
     return (
         <div className="grid grid-cols-12 h-screen">
             <div className="col-span-6 bg-[#f2c98a] flex items-center">
@@ -15,7 +55,7 @@ function Register() {
             <div className="col-span-6 flex items-center">
                 <div className="container">
                     <div className="flex justify-center">
-                        <div className="text-center w-4/5 space-y-4">
+                        <form className="text-center w-4/5 space-y-4" onSubmit={handleLogin}>
                             <h5 className="text-2xl font-bold">Đăng Nhập</h5>
                             <p className="text-lg font-medium">
                                 Bạn chưa có tài khoản?{' '}
@@ -23,12 +63,14 @@ function Register() {
                                     Đăng ký miễn phí ngay!
                                 </Link>
                             </p>
-                            <input type="text" className="input input-form" placeholder="Email" />
+                            <input type="text" id="email" className="input input-form" placeholder="Email" />
                             <p className="text-right text-[#e91a1a] text-base !-mb-2 cursor-pointer">Quên mật khẩu</p>
-                            <input type="password" className="input input-form" placeholder="Mật khẩu" />
+                            <input type="password" id="password" className="input input-form" placeholder="Mật khẩu" />
 
-                            <button className="w-full input input-form !bg-[#009ef7] text-white">Đăng nhập</button>
-                        </div>
+                            <button type="submit" className="w-full input input-form !bg-[#009ef7] text-white">
+                                Đăng nhập
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
