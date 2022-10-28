@@ -6,6 +6,7 @@ import axios from 'axios';
 import Product from '~/layouts/components/Product';
 function Category() {
     const { categoryId } = useParams();
+    const { keyword } = useParams();
     const [category, setCategory] = useState();
     const [categoryName, setCategoryName] = useState();
     const [products, setProducts] = useState();
@@ -42,12 +43,27 @@ function Category() {
             .then((res) => setProducts(res.data.data))
             .catch((err) => console.log(err));
     };
+    const searchProduct = (keyword) => {
+        axios
+            .get(`http://localhost/be-f-furniture/public/api/product?keyword=${keyword}`)
+            .then((res) => {
+                console.log(res);
+                setProducts(res.data.data);
+            })
+            .catch((err) => console.log(err));
+    };
     useEffect(() => {
         getCategories();
     }, [categoryId]);
     useEffect(() => {
         getProducts(categoryId);
     }, [categoryId]);
+    useEffect(() => {
+        console.log(keyword);
+        if (keyword) {
+            searchProduct(keyword);
+        }
+    }, [keyword]);
     return (
         <div className="mb-20">
             {/* breadcrumb */}

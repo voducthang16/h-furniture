@@ -15,6 +15,10 @@ const publicRoutes = [
         component: Category,
     },
     {
+        path: '/category/search/:keyword',
+        component: Category,
+    },
+    {
         path: '/category/:categoryId',
         component: Category,
     },
