@@ -134,7 +134,7 @@ function Header() {
                     </div>
                 </div>
 
-                <div className="hidden navbar absolute top-full left-0 right-0 bg-white shadow">
+                <div className="hidden navbar absolute top-full left-0 right-0 bg-white shadow lg:hidden">
                     <ul className="text-base p-4 md:mx-[26px] space-y-4">
                         <li>
                             <Link to={'/'}>Trang chủ</Link>
