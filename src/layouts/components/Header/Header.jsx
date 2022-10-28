@@ -3,11 +3,12 @@ import styles from './Header.module.scss';
 import './Header.scss';
 import image from '~/assets/images';
 import Image from '~/components/Image';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AiOutlineArrowDown, AiOutlineSearch, AiOutlineShoppingCart, AiOutlineUser } from 'react-icons/ai';
 import { GoThreeBars } from 'react-icons/go';
 import axios from 'axios';
 function Header() {
+    const navigate = useNavigate();
     const handleShowNavbar = () => {
         const navbar = document.querySelector('.navbar');
         navbar.classList.toggle('hidden');
@@ -33,6 +34,11 @@ function Header() {
     useEffect(() => {
         getCategories();
     }, []);
+    const search = (e) => {
+        e.preventDefault();
+        const keyword = document.querySelector('#search-keyword').value;
+        navigate(`/category/search/${keyword}`);
+    };
     return (
         <header className="header-wrapper">
             <div className="header bg-white border-b border-slate-200 relative">
@@ -91,7 +97,7 @@ function Header() {
                         </div>
                     </div>
                     <div className="hidden search-bar w-full top-full pb-5">
-                        <form>
+                        <form onSubmit={search}>
                             <label
                                 htmlFor="default-search"
                                 className="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-gray-300"
@@ -118,7 +124,7 @@ function Header() {
                                 </div>
                                 <input
                                     type="search"
-                                    id="default-search"
+                                    id="search-keyword"
                                     className="block p-4 pl-10 w-full outline-none text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                     placeholder="Tìm kiếm sản phẩm ..."
                                     required
