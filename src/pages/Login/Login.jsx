@@ -30,7 +30,7 @@ function Register() {
         const email = document.querySelector('#email');
         const password = document.querySelector('#password');
         axios
-            .get('', {
+            .post('', {
                 email: email,
                 password: password,
             })
@@ -64,7 +64,9 @@ function Register() {
                                 </Link>
                             </p>
                             <input type="text" id="email" className="input input-form" placeholder="Email" />
-                            <p className="text-right text-[#e91a1a] text-base !-mb-2 cursor-pointer">Quên mật khẩu</p>
+                            <p className="text-right text-[#e91a1a] text-base !-mb-2 cursor-pointer">
+                                <Link to={'/forgotpassword'}>Quên mật khẩu</Link>
+                            </p>
                             <input type="password" id="password" className="input input-form" placeholder="Mật khẩu" />
 
                             <button type="submit" className="w-full input input-form !bg-[#009ef7] text-white">

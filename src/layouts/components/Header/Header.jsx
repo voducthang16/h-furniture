@@ -75,6 +75,11 @@ function Header() {
                                         Giới thiệu
                                     </Link>
                                 </li>
+                                <li className="py-2 px-3 flex items-center">
+                                    <Link className="text-base" to={'/changepass'}>
+                                        Đổi mật khẩu
+                                    </Link>
+                                </li>
                             </ul>
                         </div>
                         <div className="col-start-8 col-span-5 lg:col-span-3 flex items-center">
