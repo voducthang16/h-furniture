@@ -11,6 +11,7 @@ function getCookie(name) {
 }
 function Changepass() {
     const handleChangepass = (e) => {
+        e.preventDefault();
         const old_password = document.querySelector('#old_password').value;
         const new_password = document.querySelector('#new_password').value;
         axios
@@ -22,7 +23,7 @@ function Changepass() {
                 },
                 {
                     headers: {
-                        Authorization: getCookie('access_token'),
+                        Authorization: `Bearer ` + getCookie('access_token'),
                     },
                 },
             )
