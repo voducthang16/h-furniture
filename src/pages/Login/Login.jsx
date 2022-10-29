@@ -1,6 +1,6 @@
 import Image from '~/components/Image';
 import images from '~/assets/images';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 function setCookie(name, value, days) {
     var expires = '';
@@ -16,6 +16,7 @@ function eraseCookie(name) {
     document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 function Register() {
+    const navigate = useNavigate();
     const handleLogin = (e) => {
         e.preventDefault();
         const email = document.querySelector('#email').value;
@@ -27,8 +28,8 @@ function Register() {
             })
             .then(function (response) {
                 setCookie('login', true, 7);
-                setCookie('access_token', response.access_token, 7);
-                window.location.replace('http://localhost:3000/');
+                setCookie('access_token', response.data.access_token, 7);
+                navigate('/');
             })
             .catch(function (error) {
                 console.log(error);
