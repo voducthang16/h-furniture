@@ -1,8 +1,18 @@
 import axios from 'axios';
+function getCookie(name) {
+    var nameEQ = name + '=';
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+}
 function Changepass() {
     const handleChangepass = (e) => {
-        const old_password = document.querySelector('#old_password');
-        const new_password = document.querySelector('#new_password');
+        const old_password = document.querySelector('#old_password').value;
+        const new_password = document.querySelector('#new_password').value;
         axios
             .post(
                 'http://localhost/be-f-furniture/public/api/auth/change-password',
@@ -10,11 +20,11 @@ function Changepass() {
                     old_password: old_password,
                     new_password: new_password,
                 },
-                // {
-                //     headers: {
-                //         Authorization: `Bearer ${user.access_token}`,
-                //     },
-                // },
+                {
+                    headers: {
+                        Authorization: getCookie('access_token'),
+                    },
+                },
             )
             .then(function (response) {
                 alert('Đổi mật khẩu thành công');

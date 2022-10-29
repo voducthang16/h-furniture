@@ -2,7 +2,7 @@ import axios from 'axios';
 function ForgotPassword() {
     const handleForgotPassword = (e) => {
         e.preventDefault();
-        const email = document.querySelector('#email');
+        const email = document.querySelector('#email').value;
         axios
             .post('http://localhost/be-f-furniture/public/api/auth/forgot-password', {
                 email: email,
