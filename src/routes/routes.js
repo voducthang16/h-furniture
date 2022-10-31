@@ -6,6 +6,8 @@ import Login from '~/pages/Login';
 import Signup from '~/pages/Signup';
 import ForgotPassword from '~/pages/ForgotPassword';
 import Changepass from '~/pages/Changepass';
+import AdminCategory from '~/pages/Admin/Category';
+import AdminLayout from '~/layouts/AdminLayout';
 // not required login
 const publicRoutes = [
     {
@@ -50,6 +52,11 @@ const publicRoutes = [
     {
         path: 'changepass',
         component: Changepass,
+    },
+    {
+        path: 'admin/category',
+        component: AdminCategory,
+        layout: AdminLayout,
     },
 ];
 
