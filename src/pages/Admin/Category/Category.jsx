@@ -13,8 +13,10 @@ import {
 import axios from 'axios';
 import { BsPencil } from 'react-icons/bs';
 import { MdDeleteOutline } from 'react-icons/md';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { AiOutlineArrowLeft, AiOutlineArrowRight } from 'react-icons/ai';
 function Category() {
+    const [listCate, setListCate] = useState([]);
     const [idUpdate, setIdUpdate] = useState();
     const [idDelete, setIdDelete] = useState();
     const { isOpen: isAddOpen, onOpen: onAddOpen, onClose: onAddClose } = useDisclosure();
@@ -37,7 +39,7 @@ function Category() {
             .catch((err) => console.log(err));
     };
     const updateCategoryContent = (id_item) => {
-        const item = fakeData.filter((item) => item.id === id_item)[0];
+        const item = listCate.filter((item) => item.id === id_item)[0];
         document.querySelector('#update-category-name').value = item.name;
         document.querySelector('#update-category-order').value = item.thutu;
         if (item.status === 0) {
@@ -64,13 +66,31 @@ function Category() {
         e.preventDefault();
         axios.delete(`/${idDelete}`).then(() => alert('Xoá thành công'));
     };
-    const fakeData = [
-        { id: 1, thutu: 1, name: 'abcdef', status: 1 },
-        { id: 2, thutu: 2, name: 'zxcvbn', status: 1 },
-        { id: 3, thutu: 3, name: 'aaaaa', status: 0 },
-    ];
+    const [totalItem, setTotalItem] = useState();
+    const itemPerPage = 3;
+    const paginationQuantity = Math.ceil(totalItem / itemPerPage);
+    const [paginationArr, setPaginationArr] = useState();
+    const [currentPage, setCurrentPage] = useState(1);
+    const getCategory = (currentPage = 1) => {
+        axios
+            .get(`http://localhost/be-f-furniture/public/api/admin-category&page=${currentPage}`)
+            .then((res) => {
+                setListCate(res.data.data);
+                setTotalItem(res.data.last_page);
+            })
+            .catch((err) => console.log(err));
+    };
+    useEffect(() => {
+        const arr = [];
+        if (totalItem) {
+            for (let i = 1; i <= paginationQuantity; i++) {
+                arr.push(i);
+            }
+            setPaginationArr(arr);
+        }
+    }, []);
     return (
-        <div className="">
+        <div>
             <div className="h-20 flex items-center">
                 <button
                     onClick={onAddOpen}
@@ -93,11 +113,11 @@ function Category() {
                         </tr>
                     </thead>
                     <tbody>
-                        {fakeData.map((item, index) => (
+                        {listCate.map((item, index) => (
                             <tr key={index} className="text-center h-10">
-                                <td>{item.thutu}</td>
-                                <td>{item.name}</td>
-                                <td>{item.status === 1 ? 'Active' : 'Inactive'}</td>
+                                <td>{item.thu_tu}</td>
+                                <td>{item.ten_loai}</td>
+                                <td>{item.trang_thai === 1 ? 'Active' : 'Inactive'}</td>
                                 <td className="flex justify-center space-x-4">
                                     <BsPencil
                                         onClick={() => {
@@ -121,6 +141,32 @@ function Category() {
                         ))}
                     </tbody>
                 </table>
+                <div className="container mt-20">
+                    <div className="grid grid-cols-12">
+                        <div className="col-span-9 col-start-4 flex justify-center items-center space-x-4">
+                            <div className="pagination-button">
+                                <AiOutlineArrowLeft />
+                            </div>
+                            <ul className="flex space-x-2">
+                                {paginationArr?.map((index) => (
+                                    <li
+                                        key={index}
+                                        className={`pagination-button ${index === currentPage ? 'active' : ''}`}
+                                        onClick={() => {
+                                            setCurrentPage(index);
+                                            getCategory(index);
+                                        }}
+                                    >
+                                        {index}
+                                    </li>
+                                ))}
+                            </ul>
+                            <div className="pagination-button">
+                                <AiOutlineArrowRight />
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             {/* Add */}
             <Modal isOpen={isAddOpen} onClose={onAddClose}>
