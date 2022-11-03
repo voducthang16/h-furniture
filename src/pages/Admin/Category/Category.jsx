@@ -22,13 +22,19 @@ function Category() {
     const { isOpen: isAddOpen, onOpen: onAddOpen, onClose: onAddClose } = useDisclosure();
     const { isOpen: isUpdateOpen, onOpen: onUpdateOpen, onClose: onUpdateClose } = useDisclosure();
     const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+    const [totalItem, setTotalItem] = useState([]);
+    const itemPerPage = 3;
+    const paginationQuantity = Math.ceil(totalItem / itemPerPage);
+    const [paginationArr, setPaginationArr] = useState();
+    const [currentPage, setCurrentPage] = useState(1);
+
     const addCategory = (e) => {
         e.preventDefault();
         const name = document.querySelector('#add-category-name').value;
         const order = document.querySelector('#add-category-order').value;
         const status = document.querySelector('[name="status"]:checked').value;
         axios
-            .post('', {
+            .post('http://localhost/be-f-furniture/public/api/add-category', {
                 name: name,
                 thu_tu: order,
                 status: status,
@@ -40,9 +46,9 @@ function Category() {
     };
     const updateCategoryContent = (id_item) => {
         const item = listCate.filter((item) => item.id === id_item)[0];
-        document.querySelector('#update-category-name').value = item.name;
-        document.querySelector('#update-category-order').value = item.thutu;
-        if (item.status === 0) {
+        document.querySelector('#update-category-name').value = item.ten_loai;
+        document.querySelector('#update-category-order').value = item.thu_tu;
+        if (item.trang_thai === 0) {
             document.querySelector('#update-active').checked = true;
         } else {
             document.querySelector('#update-in-active').checked = true;
@@ -54,8 +60,11 @@ function Category() {
         const order = document.querySelector('#update-category-order').value;
         const status = document.querySelector('[name="update_status"]:checked').value;
         axios
-            .patch('', {
+            .post('http://localhost/be-f-furniture/public/api/update-category', {
                 id: idUpdate,
+                name: name,
+                thu_tu: order,
+                status: status,
             })
             .then((res) => {
                 alert('Cập nhật thành công');
@@ -64,31 +73,39 @@ function Category() {
     };
     const deleteCategory = (e) => {
         e.preventDefault();
-        axios.delete(`/${idDelete}`).then(() => alert('Xoá thành công'));
+        axios
+            .post(`http://localhost/be-f-furniture/public/api/delete-category`, {
+                id: idDelete,
+            })
+            .then(() => alert('Xoá thành công'));
     };
-    const [totalItem, setTotalItem] = useState();
-    const itemPerPage = 3;
-    const paginationQuantity = Math.ceil(totalItem / itemPerPage);
-    const [paginationArr, setPaginationArr] = useState();
-    const [currentPage, setCurrentPage] = useState(1);
+
     const getCategory = (currentPage = 1) => {
         axios
-            .get(`http://localhost/be-f-furniture/public/api/admin-category&page=${currentPage}`)
+            .get(`http://localhost/be-f-furniture/public/api/admin-category?page=${currentPage}`)
             .then((res) => {
                 setListCate(res.data.data);
-                setTotalItem(res.data.last_page);
+                setTotalItem(res.data.links);
             })
             .catch((err) => console.log(err));
     };
-    useEffect(() => {
+    const functionAwait = async () => {
+        await getCategory();
         const arr = [];
+        console.log(totalItem);
         if (totalItem) {
             for (let i = 1; i <= paginationQuantity; i++) {
                 arr.push(i);
             }
+            console.log(arr);
             setPaginationArr(arr);
         }
+    };
+
+    useEffect(() => {
+        getCategory();
     }, []);
+
     return (
         <div>
             <div className="h-20 flex items-center">
@@ -144,11 +161,8 @@ function Category() {
                 <div className="container mt-20">
                     <div className="grid grid-cols-12">
                         <div className="col-span-9 col-start-4 flex justify-center items-center space-x-4">
-                            <div className="pagination-button">
-                                <AiOutlineArrowLeft />
-                            </div>
                             <ul className="flex space-x-2">
-                                {paginationArr?.map((index) => (
+                                {totalItem.map((item, index) => (
                                     <li
                                         key={index}
                                         className={`pagination-button ${index === currentPage ? 'active' : ''}`}
@@ -157,13 +171,20 @@ function Category() {
                                             getCategory(index);
                                         }}
                                     >
-                                        {index}
+                                        {item.label === '&laquo; Previous' ? (
+                                            <span>
+                                                <AiOutlineArrowLeft />
+                                            </span>
+                                        ) : item.label === 'Next &raquo;' ? (
+                                            <span>
+                                                <AiOutlineArrowRight />
+                                            </span>
+                                        ) : (
+                                            <span>{item.label}</span>
+                                        )}
                                     </li>
                                 ))}
                             </ul>
-                            <div className="pagination-button">
-                                <AiOutlineArrowRight />
-                            </div>
                         </div>
                     </div>
                 </div>
